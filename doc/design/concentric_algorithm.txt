@@ -1,3 +1,6 @@
+Start with concentric squares, randomly play walls between them, then carve a
+path from the middle to a starting position on the outer ring.
+
 -----------	i = 0: j = 0: 1
 |.........|	i = 1: j = 0, 10: 1 (else: 0)
 |.-------.|	i = 2, j = 1, 9 : 0 
@@ -102,7 +105,7 @@ i = m+1; i < e; i++
 			else
 				:0
 
-Not All Odd Numbers:
+Maze Dimensions don't work for all odd numbers .:
 
 	Sequence 3, 7, 11, 15, 19, 23...
 
@@ -148,28 +151,25 @@ Not All Odd Numbers:
 	x = roundToOdd(x) {return isEven(x)? x + 1: x}
 	x = roundToMazeSequenceTerm{return (x+1) % 4? x + 2: x}
 
-Above works for gap of 1.
+Above works for gap = 1 .:
 
-	Gap = 2
+	gap = 2
 
 	Sequence: 4, 10, 16, 22 ...
-
 	a(n) = 6n - 2
 
-	Gap = 3
+	gap = 3
 
 	Sequence: 5, 13, 21, 29 ...
-
 	a(n) = 8n - 3
 
-	Gap = 4
+	gap = 4
 
 	Sequence: 6, 16, 26, 36 ...
-
 	a(n) = 10n - 4
 
 
-	Sequence for all gap sizes:
+	Sequence for all gap:
 
 	a(n) = (2gap + 2)n - gap
 
@@ -179,4 +179,4 @@ Above works for gap of 1.
 
 Number of Limits (prev_s_lims/prev_e_lims) depends on gap:
 
-	no of lims = ceil(mid / gap+1)
+	no of lims = ceil(mid / gap + 1)

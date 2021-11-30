@@ -1,0 +1,182 @@
+-----------	i = 0: j = 0: 1
+|.........|	i = 1: j = 0, 10: 1 (else: 0)
+|.-------.|	i = 2, j = 1, 9 : 0 
+|.|.....|.|	i = 3, j = 0, 2, 8, 10: 1
+|.|.---.|.|	i = 4, j = 1, 3, 7, 9 : 0
+|.|.|.|.|.|	i = 5, j = 0, 2, 4, 6, 8, 10: 1
+|.|.---.|.|	i = 6, j = 1, 3, 7, 9 : 0
+|.|.....|.|	i = 7, j = 0, 2, 8, 10: 1 
+|.-------.|	...
+|.........|
+-----------
+
+size = 11
+
+i = 0 OR i = size: 1
+j = 0 OR j = size: 1
+i += even OR i -= even: 1
+j += even OR j -= even: 1
+
+
+s = 0		(start)
+e = 10		(end)
+m = e / 2	(middle)
+c = 2		(count)
+
+i = s, s <= j <= e: 1
+i += c, j = s, j = e, s+c <= j <= e-c: 1
+i += c, j = s, j = e, j = s+c, j = e-c, s+c+c <= j <= e-c-c: 1
+i > m, reverse above
+
+
+s_lim = s;
+e_lim = e;
+
+prev_s_lim[ceil(m/2)] = {0}
+prev_e_lim[ceil(m/2)] = {0}
+
+i = s; i < m; i += c
+	j = s; j < e; j++
+		if(s_lim <= j <= e_lim OR j in prev_s_lim OR j in prev_e_lim)
+			:1
+		else
+			:0
+	
+
+	prev_s_lim[i / c] = s_lim
+	prev_e_lim[i / c] = e_lim
+	s_lim += c
+	e_lim -= c
+
+
+s = 1
+e = 10
+
+i = s, j = s, j = e: 1
+i +=c , j = s, j = e, j = s+c, j = e+c: 1
+...
+
+
+gap = ? + 1	(gap between walls plus next wall)
+
+i = 0; i <= m; i++
+	if(i % gap == 0)
+		j = 0; j < e; j++
+			if(s_lim <= j <= e_lim OR j in prev_s_lim OR j in prev_e_lim)
+				:1
+			else
+				:0
+
+
+		prev_s_lim[i / gap] = s_lim
+		prev_e_lim[i / gap] = e_lim
+		s_lim += gap
+		e_lim -= gap
+
+	else
+		j = 0; j < e; j++
+			if(j in prev_s_lim OR j in prev_e_lim)
+				:1
+			else
+				:0
+
+
+i = m+1; i < e; i++
+	if(i % gap == 0)
+		j = 0; j < e; j++
+			if(s_lim <= j <= e_lim OR j in prev_s_lim OR j in prev_e_lim)
+				:1
+			else
+				:0
+
+	
+		prev_s_lim[|(i / gap) - prev_s_lim.size|] = 0
+		prev_e_lim[|(i / gap) - prev_s_lim.size|] = 0
+		s_lim -= gap
+		e_lim += gap
+
+	else
+		j = 0; j < e; j++
+			if(j in prev_s_lim OR j in prev_e_lim)
+				:1
+			else
+				:0
+
+Not All Odd Numbers:
+
+	Sequence 3, 7, 11, 15, 19, 23...
+
+	n + 2, n + 5, n + 8, n + 11, n + 14
+
+	a(n) = n + 2 + 3(n-1)
+	n + 2 + 3(0), n + 2 + 3(1), n + 2 + 3(2)
+
+	a(n) = n + 2 + 3n - 3 = 4n - 1
+	
+	a(n) = 4n - 1
+
+
+	Is number in a(n)?
+
+	e.g.
+
+	3 = 4n - 1
+	4 = 4n
+	n = 4 / 4
+	n = 1; 4 % 4 == 0 .: within sequence
+
+	4 = 4n - 1
+	3 = 4n
+	3 % 4 != 0 .: not within sequence
+
+	5 = 4n - 1
+	6 = 4n
+	6 % 4 != 0
+
+
+	103 = 4n - 1
+	104 = 4n
+	n = 104 / 4
+	n = 26; 104 % 4 == 0 .: within sequence
+
+	101 = 4n - 1
+	102 = 4n
+	102 % 4 != 0 .: not within sequence
+
+	Input x
+
+	x = roundToOdd(x) {return isEven(x)? x + 1: x}
+	x = roundToMazeSequenceTerm{return (x+1) % 4? x + 2: x}
+
+Above works for gap of 1.
+
+	Gap = 2
+
+	Sequence: 4, 10, 16, 22 ...
+
+	a(n) = 6n - 2
+
+	Gap = 3
+
+	Sequence: 5, 13, 21, 29 ...
+
+	a(n) = 8n - 3
+
+	Gap = 4
+
+	Sequence: 6, 16, 26, 36 ...
+
+	a(n) = 10n - 4
+
+
+	Sequence for all gap sizes:
+
+	a(n) = (2gap + 2)n - gap
+
+	Input x (width or height)
+	(x+gap) % (2*gap + 2)? roundToNearestMazeSeqTerm(x, gap): x 
+
+
+Number of Limits (prev_s_lims/prev_e_lims) depends on gap:
+
+	no of lims = ceil(mid / gap+1)

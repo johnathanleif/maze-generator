@@ -1,1 +1,3 @@
-# maze-generator
+# Maze Generator
+
+WIP

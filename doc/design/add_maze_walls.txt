@@ -1,0 +1,114 @@
+Start with concentric squares...
+
+Randomly generate random number of random placements based on height/width and
+gap size
+
+----------
+|........|
+|........|
+|..----..|
+|..|..|..|
+|..|..|..|
+|..----..|
+|........|
+|........|
+----------
+10x10 gap 2
+
+No. of walls is per edge is:
+
+	walls = length - 2 (outer walls) - 2 * gap
+
+This allows path to be filled with walls so:
+
+	walls = ceil(walls / 2)	
+	to allow gaps between every wall
+
+Finally for outer path:
+	
+	walls = rand(0, walls)
+
+
+For inner paths, need to reduce length:
+
+	full_path = length - 2 (outer walls)
+	wallable_path = full_path - 2 * gap
+	walls = rand(0, ceil(wallable_path / 2))
+
+	For 10x10 gap 2:	length = 10
+				f_path = 8
+				w_path = 8 - 2*2 = 4
+				walls = rand(0, ceil(4/2)) = rand(0, 2)
+				--next--
+				length = w_path
+				w_path = 4 - 2*2 = 0
+				walls = rand(0, 0) = 0
+
+	For 16x16 gap 2:	length = 16
+				f_path = 14
+				w_path = 14 - 2*2 = 10
+				walls = rand(0, 5)
+				--next--
+				length = w_path = 10
+				f_path = 8
+				w_path = 4
+				walls = rand(0, 5)
+				--next--
+				...
+				walls = 0
+
+	a(n) = (2*gap + 2)n - gap
+	For gap = 3: 5, 13, 21
+
+	For 21x21 gap 3:	length = 21
+				f_path = 19
+				w_path = 19 - 2*3 = 13
+				walls = rand(0, 7)
+
+				length = w_path = 13
+				path = 13 - 2 - 2*gap = 5
+				walls = rand(0, 3)
+
+				length = 5
+				path = 5 - 2 - 2*gap = -3
+				walls = rand(0, -2) .:
+
+				if(path < 1)	i.e. inner most square
+					walls = 0
+				else 
+					walls = rand(0, ceil(path/2))
+
+Finally:
+	
+	path = length - 2 * gap - 2
+	if(path < 1)
+		walls = 0
+		break
+	else
+		walls = rand(0, ceil(path / 2))
+		length = path
+
+Calculate random walls number twice per loop to get either side.
+
+Instead, create walls array of size path initialised to {0}.
+Iterate array and place set to 1 at random, skipping ahead when previous
+result is 1.
+
+	for(i = 0; i < height; i+=gap)
+		int path = ...
+		int walls[path]
+		for(k = 0; k < path; k++)
+			insert 1's randomly and seperated by atleast
+			a single index
+		for(j = i+gap; j < width - (i+gap); j++)
+			l = i
+			while(l < i+gap)
+				maze[l++][j] = walls[j - (i+gap)]
+
+Somthing like that...
+Repeat with swapped heigth and width.
+
+
+				
+
+

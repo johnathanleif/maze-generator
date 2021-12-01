@@ -2,4 +2,4 @@
 
 WIP
 
-Currently a concentric square generator
+Currently generates concentric squares and randomly places walls betweent them. 

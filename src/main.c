@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "array_functions.h"
 
@@ -74,7 +76,78 @@ void initialiseMaze(const int height, const int width, int maze[height][width], 
 
 }
 
-void printMaze(int height, int width, int maze[height][width]) {
+void generateMazeWalls(const int path, int walls[]) {
+	walls[0] = rand() % 2;
+	for(int w = 1; w < path; w++) {
+		walls[w] = walls[w - 1] == 1? 0: rand() % 2;
+	}
+}
+
+void addMazeWalls(const int height, const int width, int maze[height][width], const int gap) {
+
+	const int mid_height = ceiling(height - 1, 2);
+	const int step = gap + 1;
+
+	srand(time(NULL));		//will need random numbers, init srand before loop
+	int length = width;
+	for(int i = 1; i < mid_height; i += step) {		//start after outer wall and jump to after next wall until at middle
+		const int path = length - 2 - 2 * gap;
+		if(path > 0) {
+			int walls_top[path];
+			int walls_bot[path];
+			memset(walls_top, 0, path*sizeof(int));
+			memset(walls_bot, 0, path*sizeof(int));
+			generateMazeWalls(path, walls_top);
+			generateMazeWalls(path, walls_bot);
+			for(int j = i + step; j < width - (i + step); j++) {
+				int k = i;
+				while(k < i + gap) {
+					maze[k++][j] = walls_top[j - (i + step)];
+				}
+				k = height - i - 1;		//inverse
+				while(k > (height - i - 1) - gap) {
+					maze[k--][j] = walls_bot[j - (i + step)];
+				}
+
+
+			}
+			length = path;
+		}
+	}
+
+	const int mid_width = ceiling(width - 1, 2);		
+	length = height;
+	for(int j = 1; j < mid_width; j += step) {
+		const int path = length - 2 - 2 * gap;
+		if(path > 0) {
+			int walls_left[path];
+			int walls_right[path];
+			memset(walls_left, 0, path*sizeof(int));
+			memset(walls_right, 0, path*sizeof(int));
+			generateMazeWalls(path, walls_left);
+			generateMazeWalls(path, walls_right);
+			for(int i = j + step; i < height - (j + step); i++) {
+				int k = j;
+				while(k < j + gap) {
+					maze[i][k++] = walls_left[i - (j + step)];
+				}
+				k = width - j - 1;		//inverse
+				while(k > (width - j - 1) - gap) {
+					maze[i][k--] = walls_right[i - (j + step)];
+				}
+
+
+			}
+			length = path;
+		}
+	}
+
+}
+
+void printMaze(const int height, const int width, const int maze[height][width]) {
+	print2dArray(height, width, maze);
+	printf("\n\n");
+
 	for(int i = 0; i < height; i++) {
 		for(int j = 0; j < width; j++) {
 			if(maze[i][j] == 1) {
@@ -117,8 +190,8 @@ int main() {
 	int maze[height][width];
 
 	initialiseMaze(height, width, maze, gap);
-	print2dArray(height, width, maze);
-	printf("\n\n");
+	addMazeWalls(height, width, maze, gap);
+
 	printMaze(height, width, maze);
 
 }

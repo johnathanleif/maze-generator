@@ -144,18 +144,104 @@ void addMazeWalls(const int height, const int width, int maze[height][width], co
 
 }
 
-void printMaze(const int height, const int width, const int maze[height][width]) {
-	print2dArray(height, width, maze);
-	printf("\n\n");
+void printMaze(const int height, const int width, const int maze[height][width], const int gap) {
+//	print2dArray(height, width, maze);
+//	printf("\n\n");
+
+	int step = gap + 1;
+
+	int mid_h = ceiling(height, 2);
+	int mid_w = ceiling(width, 2);
 
 	for(int i = 0; i < height; i++) {
 		for(int j = 0; j < width; j++) {
 			if(maze[i][j] == 1) {
-				if((j != 0 && maze[i][j - 1] == 1) || (j != width - 1 && maze[i][j + 1] == 1)) {
-					printf("-");
-				} else {
-					printf("|");
-				}
+
+					double i_prop = (double) i / (double) height;
+					double j_prop = (double) j / (double) width;
+
+					double i_inv = (double) (height - 1 - i) / (double) height;
+					double j_inv = (double) (width - 1 - j) / (double) width;
+
+					if(i < mid_h) {
+						if(j < mid_w) {
+							if(i_prop < j_prop) {
+								if(i % step == 0) {
+									printf("-");
+								} else {
+									printf("|");
+								}
+							} else if(i_prop > j_prop) {
+								if(j % step == 0) {
+									printf("|");
+								} else {
+									printf("-");
+								}
+							} else {
+								printf("+");
+							}
+						} else if(j >= mid_w) {
+							if(i_prop < j_inv) {
+								if(i % step == 0) {
+									printf("-");
+								} else {
+									printf("|");
+								}
+							} else if(i_prop > j_inv) {
+								if(j % step == 0) {
+									printf("|");
+								} else {
+									printf("-");
+								}
+							} else {
+								printf("+");
+							}
+
+						} else {
+							printf("+");
+						}
+					} else if(i >= mid_h) {
+						if(j < mid_w) {
+							if(i_inv < j_prop) {
+								if(i % step == 0) {
+									printf("-");
+								} else {
+									printf("|");
+								}
+							} else if(i_inv > j_prop) {
+								if(j % step == 0) {
+									printf("|");
+								} else {
+									printf("-");
+								}
+							} else {
+								printf("+");
+							}
+						} else if(j >= mid_w) {
+							if(i_inv < j_inv) {
+								if(i % step == 0) {
+									printf("-");
+								} else {
+									printf("|");
+								}
+							} else if(i_inv > j_inv) {
+								if(j % step == 0) {
+									printf("|");
+								} else {
+									printf("-");
+								}
+							} else {
+								printf("+");
+							}
+
+						} else {
+							printf("+");
+						}
+					} else {
+						printf("?");
+					}
+
+				
 			} else {
 				printf(".");
 			}
@@ -192,6 +278,6 @@ int main() {
 	initialiseMaze(height, width, maze, gap);
 	addMazeWalls(height, width, maze, gap);
 
-	printMaze(height, width, maze);
+	printMaze(height, width, maze, gap);
 
 }

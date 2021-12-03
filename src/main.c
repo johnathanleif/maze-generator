@@ -144,9 +144,23 @@ void addMazeWalls(const int height, const int width, int maze[height][width], co
 
 }
 
+
+void printMazeSection(const char* wall) {
+	printf("%s", wall);
+}
+
 void printMaze(const int height, const int width, const int maze[height][width], const int gap) {
-//	print2dArray(height, width, maze);
-//	printf("\n\n");
+	print2dArray(height, width, maze);
+	printf("\n");
+
+	const char* path = ".";
+	const char* l_r_wall = "-";
+	const char* t_b_wall = "|";
+	const char* t_l_corner = "F";
+	const char* t_r_corner = "¬";
+	const char* b_l_corner = "L";
+	const char* b_r_corner = "/";
+	const char* cross_section = "+";
 
 	int step = gap + 1;
 
@@ -156,94 +170,85 @@ void printMaze(const int height, const int width, const int maze[height][width],
 	for(int i = 0; i < height; i++) {
 		for(int j = 0; j < width; j++) {
 			if(maze[i][j] == 1) {
-
-					double i_prop = (double) i / (double) height;
-					double j_prop = (double) j / (double) width;
-
-					double i_inv = (double) (height - 1 - i) / (double) height;
-					double j_inv = (double) (width - 1 - j) / (double) width;
-
-					if(i < mid_h) {
-						if(j < mid_w) {
-							if(i_prop < j_prop) {
-								if(i % step == 0) {
-									printf("-");
-								} else {
-									printf("|");
-								}
-							} else if(i_prop > j_prop) {
-								if(j % step == 0) {
-									printf("|");
-								} else {
-									printf("-");
-								}
+	
+					if(i < mid_h && j < mid_w) {
+						double i_step = (double) i / (double) step;
+						double j_step = (double) j / (double) step;
+						if(i_step < j_step) {
+							if(i % step == 0) {
+								printMazeSection(l_r_wall);
 							} else {
-								printf("+");
+								printMazeSection(t_b_wall);
 							}
-						} else if(j >= mid_w) {
-							if(i_prop < j_inv) {
-								if(i % step == 0) {
-									printf("-");
-								} else {
-									printf("|");
-								}
-							} else if(i_prop > j_inv) {
-								if(j % step == 0) {
-									printf("|");
-								} else {
-									printf("-");
-								}
+						} else if(j_step < i_step) {
+							if(j % step == 0) {
+								printMazeSection(t_b_wall);
 							} else {
-								printf("+");
+								printMazeSection(l_r_wall);
 							}
-
 						} else {
-							printf("+");
+							printMazeSection(t_l_corner);
 						}
-					} else if(i >= mid_h) {
-						if(j < mid_w) {
-							if(i_inv < j_prop) {
-								if(i % step == 0) {
-									printf("-");
-								} else {
-									printf("|");
-								}
-							} else if(i_inv > j_prop) {
-								if(j % step == 0) {
-									printf("|");
-								} else {
-									printf("-");
-								}
+					} else if(i < mid_h && j >= mid_w) {
+						double i_step = (double) i / (double) step;
+						double j_step_inv = (double) (width - 1 - j) / (double) step;
+						if(i_step < j_step_inv) {
+							if(i % step == 0) {
+								printMazeSection(l_r_wall);
 							} else {
-								printf("+");
+								printMazeSection(t_b_wall);
 							}
-						} else if(j >= mid_w) {
-							if(i_inv < j_inv) {
-								if(i % step == 0) {
-									printf("-");
-								} else {
-									printf("|");
-								}
-							} else if(i_inv > j_inv) {
-								if(j % step == 0) {
-									printf("|");
-								} else {
-									printf("-");
-								}
+						} else if(j_step_inv < i_step) {
+							if(j % step == 0) {
+								printMazeSection(t_b_wall);
 							} else {
-								printf("+");
+								printMazeSection(l_r_wall);
 							}
-
 						} else {
-							printf("+");
+							printMazeSection(t_r_corner);
+						}
+					} else if(i >= mid_h && j < mid_w) {
+						double i_step_inv = (double) (height - 1 - i) / (double) step;
+						double j_step = (double) j / (double) step;
+						if(i_step_inv < j_step) {
+							if(i % step == 0) {
+								printMazeSection(l_r_wall);
+							} else {
+								printMazeSection(t_b_wall);
+							}
+						} else if(j_step < i_step_inv) {
+							if(j % step == 0) {
+								printMazeSection(t_b_wall);
+							} else {
+								printMazeSection(l_r_wall);
+							}
+						} else {
+							printMazeSection(b_l_corner);
+						}
+					} else if(i >= mid_h && j >= mid_w) {
+						double i_step_inv = (double) (height - 1 - i) / (double) step;
+						double j_step_inv = (double) (width - 1 - j) / (double) step;
+						if(i_step_inv < j_step_inv) {
+							if(i % step == 0) {
+								printMazeSection(l_r_wall);
+							} else {
+								printMazeSection(t_b_wall);
+							}
+						} else if(j_step_inv < i_step_inv) {
+							if(j % step == 0) {
+								printMazeSection(t_b_wall);
+							} else {
+								printMazeSection(l_r_wall);
+							}
+						} else {
+							printMazeSection(b_r_corner);
 						}
 					} else {
-						printf("?");
+						printMazeSection(cross_section);
 					}
 
-				
 			} else {
-				printf(".");
+				printMazeSection(path);
 			}
 		}	
 		printf("\n");
@@ -271,7 +276,7 @@ int main() {
 	const unsigned int gap = getUnsignedIntegerInput("Path Width: ");
 	const unsigned int height = roundUpToNearestMazeSeqTerm(getUnsignedIntegerInput("Maze Height: "), gap);
 	const unsigned int width = roundUpToNearestMazeSeqTerm(getUnsignedIntegerInput("Maze Width: "), gap);
-	printf("\nGenerating Maze[%d][%d] with %d wide paths...\n\n", height, width, gap);
+	printf("\nGenerating Maze %dx%d with %d wide paths...\n\n", height, width, gap);
 
 	int maze[height][width];
 
